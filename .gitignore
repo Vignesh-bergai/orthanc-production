@@ -1,0 +1,22 @@
+# Data directories (don't commit patient data!)
+data/
+logs/
+backups/
+
+# Environment files with passwords
+.env
+
+# Docker volumes
+*.sql
+*.dump
+
+# OS files
+.DS_Store
+Thumbs.db
+*~
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

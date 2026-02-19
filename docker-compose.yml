@@ -1,0 +1,115 @@
+# version: '3.8'
+
+# services:
+#   postgres:
+#     image: postgres:15-alpine
+#     container_name: orthanc-postgres
+#     environment:
+#       POSTGRES_DB: orthanc
+#       POSTGRES_USER: orthanc
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-orthanc_secure_pass}
+#     volumes:
+#       - ./data/orthanc-db:/var/lib/postgresql/data
+#     networks:
+#       - orthanc-network
+#     restart: unless-stopped
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U orthanc"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+
+#   orthanc:
+#     image: orthancteam/orthanc:latest
+#     container_name: orthanc-server
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#     ports:
+#       - "8042:8042"  # Web UI and REST API
+#       - "4242:4242"  # DICOM protocol
+#     environment:
+#       POSTGRES_HOST: postgres
+#       POSTGRES_PORT: 5432
+#       POSTGRES_DATABASE: orthanc
+#       POSTGRES_USER: orthanc
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-orthanc_secure_pass}
+#       ORTHANC_USERNAME: ${ORTHANC_USERNAME:-orthanc}
+#       ORTHANC_PASSWORD: ${ORTHANC_PASSWORD:-orthanc}
+#       VERBOSE_ENABLED: "true"
+#       VERBOSE_STARTUP: "true"
+#     volumes:
+#       - ./config/orthanc.json:/etc/orthanc/orthanc.json
+#       - ./config/postgresql.json:/etc/orthanc/postgresql.json
+#       - ./data/orthanc-storage:/var/lib/orthanc/db
+#     networks:
+#       - orthanc-network
+#     restart: unless-stopped
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:8042/system"]
+#       interval: 30s
+#       timeout: 10s
+#       retries: 3
+
+# networks:
+#   orthanc-network:
+#     driver: bridge
+
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: orthanc-postgres
+    environment:
+      POSTGRES_DB: orthanc
+      POSTGRES_USER: orthanc
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./data/orthanc-db:/var/lib/postgresql/data
+    networks:
+      - orthanc-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orthanc"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  orthanc:
+    image: orthancteam/orthanc:latest
+    container_name: orthanc-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8042:8042"
+      - "4242:4242"
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DATABASE: orthanc
+      POSTGRES_USER: orthanc
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ORTHANC_USERNAME: ${ORTHANC_USERNAME}
+      ORTHANC_PASSWORD: ${ORTHANC_PASSWORD}
+      VERBOSE_ENABLED: "true"
+      VERBOSE_STARTUP: "true"
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+    volumes:
+      - ./config/orthanc.json:/etc/orthanc/orthanc.json
+      - ./config/postgresql.json:/etc/orthanc/postgresql.json
+      - ./data/orthanc-storage:/var/lib/orthanc/db
+    networks:
+      - orthanc-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8042/system"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  orthanc-network:
+    driver: bridge
