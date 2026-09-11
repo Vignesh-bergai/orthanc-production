@@ -6,7 +6,7 @@
         "Port" : 5432,
         "Database" : "orthanc",              
         "Username" : "orthanc",              
-        "Password" : "vignesh", 
+        "Password" : "z1iXplwoZ+6i3cUHOJfCAgOCPSinNftd", 
         "Lock" : true,
         "EnableSsl" : false,
         "MaximumConnectionRetries" : 10,
